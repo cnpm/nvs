@@ -3,8 +3,9 @@
 	},
 	"remotes": {
 	"default": "node",
-		"node": "https://nodejs.org/dist/",
-		"nightly": "https://nodejs.org/download/nightly/",
+		"node": "https://npm.taobao.org/mirrors/node/",
+		"nightly": "https://npm.taobao.org/mirrors/node-nightly/",
+		"alinode": "https://npm.taobao.org/mirrors/alinode/",
 		"chakracore": "https://github.com/nodejs/node-chakracore/releases/",
 		"chakracore-nightly": "https://nodejs.org/download/chakracore-nightly/"
 	},
