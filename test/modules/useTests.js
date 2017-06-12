@@ -2,11 +2,11 @@ const path = require('path');
 const test = require('ava').test;
 const rewire = require('rewire');
 
-const NodeVersion = require('../lib/version');
+const NodeVersion = require('../../lib/version');
 
-test.before(require('./checkNodeVersion'));
+test.before(require('../checkNodeVersion'));
 
-const mockFs = require('./mockFs');
+const mockFs = require('../mocks/fs');
 const testHome = mockFs.fixSep('/home/test/nvs/');
 
 global.settings = {
@@ -21,13 +21,13 @@ global.settings = {
 
 const linkPath = testHome + 'default';
 
-const nvsUse = rewire('../lib/use');
+const nvsUse = rewire('../../lib/use');
 nvsUse.__set__('fs', mockFs);
 
 const bin = (nvsUse.isWindows ? '' : '/bin');
 const exe = (nvsUse.isWindows ? 'node.exe' : 'node');
 
-const mockChildProc = require('./mockChildProc');
+const mockChildProc = require('../mocks/child_process');
 nvsUse.__set__('childProcess', mockChildProc);
 
 
@@ -132,7 +132,7 @@ test('Use - no arch', t => {
 	setPath([
 		'/bin',
 	]);
-	mockNvsList.findVersion = new NodeVersion('test', '5.6.7', 'x64');
+	mockNvsList.findVersion = new NodeVersion('test', '5.6.7', NodeVersion.defaultArch);
 	nvsUse.use(new NodeVersion('test', '5.6.7'));
 	let newPath = getPath();
 	t.deepEqual(newPath, [binDir, mockFs.fixSep('/bin')]);
@@ -144,7 +144,7 @@ test('Use - partial version', t => {
 	setPath([
 		'/bin',
 	]);
-	mockNvsList.findVersion = new NodeVersion('test', '5.6.7', 'x64');
+	mockNvsList.findVersion = new NodeVersion('test', '5.6.7', NodeVersion.defaultArch);
 	nvsUse.use(new NodeVersion('test', '5'));
 	let newPath = getPath();
 	t.deepEqual(newPath, [binDir, mockFs.fixSep('/bin')]);

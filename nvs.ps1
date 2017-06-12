@@ -32,9 +32,9 @@ if (-not (Test-Path $bootstrapNodePath)) {
 	}
 
 	# Parse the bootstrap parameters from defaults.json.
-	$bootstrapNodeVersion = ((Get-Content $scriptDir\defaults.json | ConvertFrom-Json |% "bootstrap") -replace ".*/")
-	$bootstrapNodeRemote = ((Get-Content $scriptDir\defaults.json | ConvertFrom-Json |% "bootstrap") -replace "/.*")
-	$bootstrapNodeBaseUri = (Get-Content $scriptDir\defaults.json | ConvertFrom-Json |% "remotes" |% $bootstrapNodeRemote)
+	$bootstrapNodeVersion = ((Get-Content -Raw $scriptDir\defaults.json | ConvertFrom-Json |% "bootstrap") -replace ".*/")
+	$bootstrapNodeRemote = ((Get-Content -Raw $scriptDir\defaults.json | ConvertFrom-Json |% "bootstrap") -replace "/.*")
+	$bootstrapNodeBaseUri = (Get-Content -Raw $scriptDir\defaults.json | ConvertFrom-Json |% "remotes" |% $bootstrapNodeRemote)
 
 	$bootstrapNodeArch = "x86"
 	if ($env:PROCESSOR_ARCHITECTURE -ieq "AMD64" -or $env:PROCESSOR_ARCHITEW6432 -ieq "AMD64") {
@@ -51,7 +51,7 @@ if (-not (Test-Path $bootstrapNodePath)) {
 	powershell.exe -Command " `$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri '$bootstrapNodeUri' -OutFile '$bootstrapNodeArchivePath' "
 
 	# Extract node.exe from the archive using 7zr.exe.
-	. "$env:NVS_HOME\tools\7-Zip\7zr.exe" e "-o$(Split-Path $bootstrapNodePath)" -y "$bootstrapNodeArchivePath" "node-v$bootstrapNodeVersion-win-$bootstrapNodeArch\node.exe" > $null
+	. "$scriptDir\tools\7-Zip\7zr.exe" e "-o$(Split-Path $bootstrapNodePath)" -y "$bootstrapNodeArchivePath" "node-v$bootstrapNodeVersion-win-$bootstrapNodeArch\node.exe" > $null
 
 	Write-Output ""
 

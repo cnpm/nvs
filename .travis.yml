@@ -1,0 +1,13 @@
+os:
+- linux
+- osx
+language: node_js
+node_js:
+- "6"
+addons:
+  apt:
+    packages:
+    - zsh
+before_install:
+- if [ $TRAVIS_OS_NAME = osx ]; then brew update; fi
+- if [ $TRAVIS_OS_NAME = osx ]; then brew install zsh; fi

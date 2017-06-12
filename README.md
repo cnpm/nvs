@@ -1,20 +1,13 @@
 # NVS (Node Version Switcher)
 
-NVS is a cross-platform tool for switching between different versions and forks of [**Node.js**](http://nodejs.org). NVS is itself written in node JavaScript.
+[![Build Status: Mac + Linux](https://travis-ci.org/jasongin/nvs.svg?branch=master)](https://travis-ci.org/jasongin/nvs) [![Build status: Windows](https://ci.appveyor.com/api/projects/status/p0mo0nobkf0ws7ie/branch/master?svg=true)](https://ci.appveyor.com/project/jasongin/nvs)
 
-## Why yet another version manager tool?
-NVS has three significant advantages over similar tools:
-
-1. None of the existing node version manager tools support both Windows and non-Windows platforms. The obvious way to build a cross-platform tool for the node ecosystem is to write the tool itself in node JavaScript. While it may seem to be a "chicken-and-egg" problem for a node-downloader tool to itself require node, that's actually not such a big challenge, and once that is solved then a version manager tool can benefit tremendously from being coded in a language that is both cross-platform and familiar to everyone using it.
-
-2. NVS supports multiple configurable remotes for node downloads, rather than getting node versions only from a single source (`https://nodejs.org/dist/`). That allows for not only switching versions but switching between builds from other forks of node, potentially using other JavaScript engines.
-
-3. NVS uses a combination of `PATH` environment updates to manage the current version and and symbolic links to manage the user or system default node version, in a way that is simple and consistent across platforms.
+NVS is a cross-platform utility for switching between different versions and forks of [**Node.js**](http://nodejs.org). NVS is itself written in node JavaScript.
 
 This tool is obviously inspired by other node version manager tools, especially [**nvm**](https://github.com/creationix/nvm), from which it borrows a lot of ideas and some command-line syntax.
 
 ## Setup
-Following are basic setup instructions. [For more details and options for setting up NVS, refer to the Setup page.](https://github.com/jasongin/nvs/blob/master/doc/SETUP.md)
+Following are basic setup instructions. [For more details and options for setting up NVS, refer to the Setup page.](doc/SETUP.md)
 
 ### Windows
 A Windows Installer (MSI) package is available from the [NVS releases page on GitHub](https://github.com/jasongin/nvs/releases).
@@ -28,6 +21,9 @@ git clone https://github.com/jasongin/nvs "$NVS_HOME"
 ```
 
 The `nvs.sh` script adds an `nvs` shell function to the environment. Afterward the tool should be invoked as just `nvs` without any path. The `install` command adds lines to your `~/.bashrc`, `~/.profile`, or `~/.zshrc` file to source `nvs.sh`, so that the `nvs` function is available in future shells.
+
+### CI Environments
+[NVS can be used in a CI environment](doc/CI.md) such as AppVeyor or Travis CI, to test a Node.js app or library on any version of Node.js that NVS can install.
 
 ## Basic usage
 To add the latest version of node:
@@ -54,6 +50,7 @@ Command | Description
 `nvs add <version>`              | Download and extract a node version
 `nvs rm <version>`               | Remove a node version
 `nvs migrate <fromver> [tover]`  | Migrate global modules
+`nvs upgrade [fromver]`          | Upgrade to latest patch of major version
 `nvs use [version]`              | Use a node version in the current shell
 `nvs auto [on/off]`              | Automatically switch based on cwd
 `nvs run <ver> <js> [args...]`   | Run a script using a node version
@@ -76,6 +73,27 @@ When invoked with no parameters, `nvs` displays an interactive menu for switchin
 ![nvs menu](https://github.com/jasongin/nvs/releases/download/v0.8.0/nvs-menu.gif)
 
 *NVS uses [**console-menu**](https://github.com/jasongin/console-menu), a module originally written for this project then published separately.*
+
+## VS Code support
+Visual Studio Code can use NVS to select a node version to use when launching or debugging. In `launch.json`, add a `"runtimeArgs"` attribute with an NVS version string and a `"runtimeExecutable"` attribute that refers to `nvs.cmd` (Windows) or `nvs` (Mac, Linux). (You may need to specify an absolute path such as `"${env:HOME}/.nvs/nvs"` if NVS is not in VS Code's PATH.)
+
+Example: Configure `launch.json` so VS Code uses NVS to launch node version 6.10:
+```json
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${file}",
+      "args": [ ],
+      "runtimeArgs": [ "6.10" ],
+      "windows": { "runtimeExecutable": "nvs.cmd" },
+      "osx": { "runtimeExecutable": "nvs" },
+      "linux": { "runtimeExecutable": "nvs" }
+    },
+```
+
+Or, remove the version string from `"runtimeArgs"` to get the version from a `.node-version` file in the project directory. For more details, see the [NVS VS Code documentation](doc/VSCODE.md) or run `nvs help vscode`.
 
 ## Configurable remotes
 The `nvs remote` command allows configuration of multiple named download locations. NVS manages versions from different remote locations separately, so there is no risk of version collisions. By default there are remotes pointing to Node.js official releases and nightly builds:
